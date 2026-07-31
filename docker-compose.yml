@@ -1,0 +1,30 @@
+services:
+
+  django:
+    build: .
+
+    container_name: document_ai_api
+
+    working_dir: /app
+
+    volumes:
+      # Your code
+      - .:/app
+
+      # Paddle model cache
+      - paddle_models:/root/.paddlex
+
+      # PaddleOCR cache
+      - paddleocr_models:/root/.paddleocr
+
+    ports:
+      - "8000:8000"
+
+    command:
+      python manage.py runserver 0.0.0.0:8000
+
+
+volumes:
+
+  paddle_models:
+  paddleocr_models:
