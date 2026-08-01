@@ -9,12 +9,11 @@ from decouple import config, Csv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ── Security ──────────────────────────────────────────────────────────────────
-SECRET_KEY: str = config("SECRET_KEY")
-DEBUG: bool = config("DEBUG", default=False, cast=bool)
-ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
+SECRET_KEY= 'django-insecure-gp1hf%twwtj&8i$da$y%u4hm)o2gusv3uih(jji859xy9eex0y'
+DEBUG = True
+ALLOWED_HOSTS= ['*']
 
-# ── Applications ──────────────────────────────────────────────────────────────
+
 INSTALLED_APPS: list[str] = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -22,6 +21,12 @@ INSTALLED_APPS: list[str] = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    # Local
+    "apps.authentication.apps.AuthenticationConfig",
+    "apps.users.apps.UsersConfig",
+    "apps.documents.apps.DocumentsConfig",
+
     # Third-party
     "rest_framework",
     "rest_framework_simplejwt",
@@ -29,10 +34,6 @@ INSTALLED_APPS: list[str] = [
     "drf_spectacular",
     "corsheaders",
     "django_filters",
-    # Local
-    "apps.authentication.apps.AuthenticationConfig",
-    "apps.users.apps.UsersConfig",
-    "apps.documents.apps.DocumentsConfig",
 ]
 
 MIDDLEWARE: list[str] = [
@@ -65,19 +66,14 @@ TEMPLATES = [
     },
 ]
 
-# ── Database ──────────────────────────────────────────────────────────────────
 DATABASES: dict = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME", default="doclyze"),
-        "USER": config("DB_USER", default="postgres"),
-        "PASSWORD": config("DB_PASSWORD", default=""),
-        "HOST": config("DB_HOST", default="localhost"),
-        "PORT": config("DB_PORT", default="5432"),
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
-# ── Auth ──────────────────────────────────────────────────────────────────────
+
 AUTH_USER_MODEL: str = "users.User"
 
 AUTH_PASSWORD_VALIDATORS: list[dict] = [
@@ -87,7 +83,7 @@ AUTH_PASSWORD_VALIDATORS: list[dict] = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# ── REST Framework ────────────────────────────────────────────────────────────
+
 REST_FRAMEWORK: dict = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -123,7 +119,7 @@ REST_FRAMEWORK: dict = {
     },
 }
 
-# ── JWT ───────────────────────────────────────────────────────────────────────
+
 SIMPLE_JWT: dict = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=config("ACCESS_TOKEN_MINUTES", default=60, cast=int)),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=config("REFRESH_TOKEN_DAYS", default=7, cast=int)),
@@ -137,7 +133,7 @@ SIMPLE_JWT: dict = {
     "TOKEN_OBTAIN_SERIALIZER": "apps.authentication.serializers.CustomTokenObtainPairSerializer",
 }
 
-# ── DRF Spectacular ───────────────────────────────────────────────────────────
+
 SPECTACULAR_SETTINGS: dict = {
     "TITLE": "Doclyze API",
     "DESCRIPTION": "Document analysis API powered by PPStructureV3",
@@ -147,15 +143,7 @@ SPECTACULAR_SETTINGS: dict = {
     "SORT_OPERATIONS": False,
 }
 
-# ── CORS ──────────────────────────────────────────────────────────────────────
-CORS_ALLOWED_ORIGINS: list[str] = config(
-    "CORS_ALLOWED_ORIGINS",
-    default="http://localhost:3000,http://127.0.0.1:3000",
-    cast=Csv(),
-)
-CORS_ALLOW_CREDENTIALS: bool = True
 
-# ── Email ─────────────────────────────────────────────────────────────────────
 EMAIL_BACKEND: str = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST: str = config("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT: int = config("EMAIL_PORT", default=587, cast=int)
@@ -164,7 +152,6 @@ EMAIL_HOST_USER: str = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD: str = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL: str = config("DEFAULT_FROM_EMAIL", default="noreply@doclyze.com")
 
-# ── Storage / Media ───────────────────────────────────────────────────────────
 MEDIA_ROOT: Path = BASE_DIR / "media"
 MEDIA_URL: str = "/media/"
 
@@ -175,28 +162,28 @@ AVATARS_DIR: Path = MEDIA_ROOT / "avatars"
 for _dir in (DOCUMENTS_UPLOAD_DIR, DOCUMENTS_OUTPUT_DIR, AVATARS_DIR):
     _dir.mkdir(parents=True, exist_ok=True)
 
-# ── Static ────────────────────────────────────────────────────────────────────
+
 STATIC_URL: str = "/static/"
 STATIC_ROOT: Path = BASE_DIR / "staticfiles"
 
-# ── Celery ────────────────────────────────────────────────────────────────────
-CELERY_BROKER_URL: str = config("REDIS_URL", default="redis://localhost:6379/0")
-CELERY_RESULT_BACKEND: str = config("REDIS_URL", default="redis://localhost:6379/0")
+
+CELERY_BROKER_URL: str = config("REDIS_URL", default="redis://redis:6379/1")
+CELERY_RESULT_BACKEND: str = config("REDIS_URL", default="redis://redis:6379/1")
 CELERY_TASK_SERIALIZER: str = "json"
 CELERY_RESULT_SERIALIZER: str = "json"
 CELERY_ACCEPT_CONTENT: list[str] = ["json"]
 CELERY_TIMEZONE: str = "UTC"
 
-# ── Cache ─────────────────────────────────────────────────────────────────────
+
 CACHES: dict = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": config("REDIS_URL", default="redis://localhost:6379/1"),
+        "LOCATION": config("REDIS_URL", default="redis://redis:6379/1"),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
     }
 }
 
-# ── Internationalisation ──────────────────────────────────────────────────────
+
 LANGUAGE_CODE: str = "en-us"
 TIME_ZONE: str = "UTC"
 USE_I18N: bool = True
@@ -204,7 +191,14 @@ USE_TZ: bool = True
 
 DEFAULT_AUTO_FIELD: str = "django.db.models.BigAutoField"
 
-# ── App-level constants ───────────────────────────────────────────────────────
-FRONTEND_URL: str = config("FRONTEND_URL", default="http://localhost:3000")
+
+
 MAX_UPLOAD_SIZE_MB: int = config("MAX_UPLOAD_SIZE_MB", default=50, cast=int)
-ALLOWED_DOCUMENT_TYPES: list[str] = ["application/pdf", "image/jpeg", "image/png", "image/tiff"]
+ALLOWED_DOCUMENT_TYPES: list[str] = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png",
+    "image/tiff",
+    "application/msword",  # .doc
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  # .docx
+]

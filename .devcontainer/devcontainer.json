@@ -1,0 +1,11 @@
+{
+    "name": "Doclyze Django Paddle",
+
+    "dockerComposeFile": "../docker-compose.yml",
+
+    "service": "django",
+
+    "workspaceFolder": "/app",
+
+    "shutdownAction": "stopCompose"
+}

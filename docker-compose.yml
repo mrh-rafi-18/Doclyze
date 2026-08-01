@@ -1,20 +1,18 @@
 services:
 
   django:
+    image: document-ai-image
     build: .
-
     container_name: document_ai_api
 
     working_dir: /app
 
+    env_file:
+      - .env
+
     volumes:
-      # Your code
       - .:/app
-
-      # Paddle model cache
       - paddle_models:/root/.paddlex
-
-      # PaddleOCR cache
       - paddleocr_models:/root/.paddleocr
 
     ports:
@@ -23,8 +21,39 @@ services:
     command:
       python manage.py runserver 0.0.0.0:8000
 
+    depends_on:
+      - redis
+
+
+  celery:
+    image: document-ai-image
+    build: .
+    container_name: document_ai_celery
+
+    working_dir: /app
+
+    env_file:
+      - .env
+
+    volumes:
+      - .:/app
+      - paddle_models:/root/.paddlex
+      - paddleocr_models:/root/.paddleocr
+
+    command:
+      celery -A config worker --loglevel=info
+
+    depends_on:
+      - redis
+
+
+  redis:
+    image: redis:7
+    container_name: document_ai_redis
+
 
 volumes:
 
   paddle_models:
+
   paddleocr_models:
