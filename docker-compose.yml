@@ -27,7 +27,6 @@ services:
 
   celery:
     image: document-ai-image
-    build: .
     container_name: document_ai_celery
 
     working_dir: /app

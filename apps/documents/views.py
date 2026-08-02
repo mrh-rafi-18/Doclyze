@@ -14,6 +14,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+
 
 from core.responses import success_response, created_response, no_content_response
 
@@ -31,9 +33,15 @@ logger = logging.getLogger(__name__)
 # ── Upload ────────────────────────────────────────────────────────────────────
 
 
+
 @extend_schema(tags=["Documents"])
 class DocumentUploadView(APIView):
     """POST /api/documents/"""
+
+    parser_classes = [
+        MultiPartParser,
+        FormParser,
+    ]
 
     permission_classes = [IsAuthenticated]
 

@@ -41,7 +41,6 @@ def generate_email_token(user: "User", purpose: str) -> EmailToken:
 
 def send_verification_email(user: "User") -> None:
     token_obj = generate_email_token(user, TokenPurpose.EMAIL_VERIFICATION)
-    verify_url = f"{settings.FRONTEND_URL}/verify-email?token={token_obj.token}"
     try:
         send_mail(
             subject="Verify your Doclyze email address",

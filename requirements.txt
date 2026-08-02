@@ -7,7 +7,7 @@ django-filter
 Pillow
 python-decouple
 psycopg2-binary
-celery
+celery==5.6.1
 redis
 django-redis
 PyMuPDF
